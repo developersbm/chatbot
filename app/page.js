@@ -1,24 +1,23 @@
+// /app/page.js
+
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react';
 
 export default function Home() {
   const [messages, setMessages] = useState([
-    {
-      role: 'assistant',
-      content: "Hi! How can I help you today?",
-    },
-  ])
-  const [message, setMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const messagesEndRef = useRef(null)
+    { role: 'assistant', content: "Hi! How can I help you today?" },
+  ]);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!message.trim() || isLoading) return;
@@ -37,21 +36,20 @@ export default function Home() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify([...messages, { role: 'user', content: userMessage }]),
+            body: JSON.stringify({ message: userMessage }),
         });
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
 
-        const lexResponse = await response.json();
-
+        const data = await response.json();
         setMessages((messages) => {
             let lastMessage = messages[messages.length - 1];
             let otherMessages = messages.slice(0, messages.length - 1);
             return [
                 ...otherMessages,
-                { ...lastMessage, content: lexResponse.message },
+                { ...lastMessage, content: data.message },
             ];
         });
     } catch (error) {
@@ -63,14 +61,14 @@ export default function Home() {
     } finally {
         setIsLoading(false);
     }
-  };
+};
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      sendMessage()
+      event.preventDefault();
+      sendMessage();
     }
-  }
+  };
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
@@ -111,5 +109,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
