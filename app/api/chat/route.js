@@ -1,4 +1,5 @@
 // /app/api/chat/route.js
+
 export async function POST(req) {
     const { message } = await req.json();
     const openAiApiKey = process.env.OPENAI_API_KEY;
